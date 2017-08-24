@@ -8,7 +8,6 @@ const St              = imports.gi.St;
 const ExtensionUtils  = imports.misc.extensionUtils;
 const HotelLauncher   = ExtensionUtils.getCurrentExtension();
 const PopupServerItem = HotelLauncher.imports.popupServerItem.PopupServerItem;
-const Util            = imports.misc.util;
 
 const HotelManager = new Lang.Class({
   Name: 'HotelManager',
@@ -39,9 +38,8 @@ const HotelManager = new Lang.Class({
     Main.panel.addToStatusArea('HotelManager', this.container);
   },
 
-  _getCommand: function() {
-    let command = '/home/olibia/.node_modules/bin/hotel';
-    return command;
+  _getCommand: function(action) {
+    return 'sh -c "hotel ' + action + '; exit;"';
   },
 
   _getUrl: function (action, id) {
@@ -61,10 +59,10 @@ const HotelManager = new Lang.Class({
   },
 
   _toggleHotel: function (start) {
-    let command = this._getCommand();
     let action  = start ? 'start' : 'stop';
+    let command = this._getCommand(action);
 
-    Util.spawn([command, action]);
+    GLib.spawn_command_line_sync(command);
   },
 
   _reloadHotel: function () {
@@ -93,11 +91,13 @@ const HotelManager = new Lang.Class({
     let items = {};
 
     if (this._running) {
-      let url   = this._getUrl('servers');
-      let list  = GLib.spawn_command_line_sync('curl ' + url);
+      let url  = this._getUrl('servers');
+      let list = GLib.spawn_command_line_sync('curl ' + url);
 
-      if (list) {
+      try {
         items = JSON.parse(list[1].toString());
+      } catch (e) {
+        items = {};
       }
     }
 
