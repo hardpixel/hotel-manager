@@ -1,0 +1,6 @@
+{
+  "name": "Hotel Manager",
+  "description": "Manage Hotel development servers",
+  "uuid": "hotel-manager@hardpixel.eu",
+  "shell-version": ["3.18", "3.20", "3.22", "3.24"]
+}
