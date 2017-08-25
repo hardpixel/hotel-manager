@@ -8,6 +8,7 @@ const St              = imports.gi.St;
 const ExtensionUtils  = imports.misc.extensionUtils;
 const HotelLauncher   = ExtensionUtils.getCurrentExtension();
 const PopupServerItem = HotelLauncher.imports.popupServerItem.PopupServerItem;
+const Util            = imports.misc.util;
 
 const HotelManager = new Lang.Class({
   Name: 'HotelManager',
@@ -38,8 +39,25 @@ const HotelManager = new Lang.Class({
     Main.panel.addToStatusArea('HotelManager', this.container);
   },
 
-  _getCommand: function(action) {
-    return 'sh -c "hotel ' + action + '; exit;"';
+  _getCommand: function() {
+    let command = 'hotel';
+    let homeDir = GLib.get_home_dir();
+    let hotelRc = homeDir + '/.hotelrc';
+
+    if (GLib.file_test(hotelRc, GLib.FileTest.EXISTS)) {
+      hotelRc = GLib.file_get_contents(hotelRc);
+
+      if (hotelRc[0] == true) {
+        let userCommand = hotelRc[1].toString().split("\n")[0];
+        userCommand = userCommand.replace('~', homeDir);
+
+        if (userCommand != '') {
+          command = userCommand;
+        }
+      }
+    }
+
+    return command;
   },
 
   _getUrl: function (action, id) {
@@ -60,9 +78,9 @@ const HotelManager = new Lang.Class({
 
   _toggleHotel: function (start) {
     let action  = start ? 'start' : 'stop';
-    let command = this._getCommand(action);
+    let command = this._getCommand();
 
-    GLib.spawn_command_line_sync(command);
+    Util.spawn([command, action]);
   },
 
   _reloadHotel: function () {
