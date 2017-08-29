@@ -12,7 +12,7 @@ Make sure you have installed [Hotel](https://github.com/typicode/hotel) and then
 
 If Hotel is not globally installed, add a `.hotelrc` file in your home directory containing the path to Hotel's executable.
 
-### Gnome Shell Extensions Page
+### Gnome Shell Extensions
 The easiest way to install this extension is via the official [Gnome Shell Extensions](https://extensions.gnome.org) resource page [here](https://extensions.gnome.org/extension/1285/hotel-manager).
 
 ### Arch Linux
