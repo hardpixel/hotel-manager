@@ -15,7 +15,7 @@ const PopupServerItem = new Lang.Class({
           x_align:         1,
           reactive:        true,
           can_focus:       true,
-          track_hover:     false,
+          track_hover:     true,
           accessible_name: 'restart',
           style_class:     'system-menu-action hotel-manager-button'
         });
@@ -30,7 +30,7 @@ const PopupServerItem = new Lang.Class({
           x_align:         1,
           reactive:        true,
           can_focus:       true,
-          track_hover:     false,
+          track_hover:     true,
           accessible_name: 'launch',
           style_class:     'system-menu-action hotel-manager-button'
         });

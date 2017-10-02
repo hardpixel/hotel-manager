@@ -1,7 +1,4 @@
 .system-menu-action.hotel-manager-button {
-  height: 18px;
-  width: 18px;
-  padding: 0;
-  border: 0;
-  background: none;
+  padding: 3px;
+  border: 1px solid;
 }
