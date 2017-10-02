@@ -105,6 +105,11 @@ const HotelManager = new Lang.Class({
     this._toggleServer(id, true);
   },
 
+  _openServerUrl: function (id) {
+    let url = 'http://' + id + '.dev';
+    Util.spawn(['xdg-open', url]);
+  },
+
   _getServers: function () {
     let items = {};
 
@@ -131,7 +136,7 @@ const HotelManager = new Lang.Class({
       servers.map(Lang.bind(this, function(id, index) {
         let server     = this._entries[id];
         let active     = this._checkServer(server);
-        let serverItem = new PopupServerItem(id, active, { 'restartButton': true });
+        let serverItem = new PopupServerItem(id, active, { 'restartButton': true, 'launchButton': true });
 
         this.container.menu.addMenuItem(serverItem);
 
@@ -143,6 +148,10 @@ const HotelManager = new Lang.Class({
           this._reloadServer(id);
           this.container.menu.close();
         }));
+
+        serverItem.launchButton.connect('clicked', Lang.bind(this, function() {
+          this._openServerUrl(id);
+        }));
       }));
     }
   },
@@ -153,7 +162,7 @@ const HotelManager = new Lang.Class({
     this._running = this._checkHotel();
     this._entries = this._getServers();
 
-    let hotelItem = new PopupServerItem('Hotel', this._running, { 'restartButton': true });
+    let hotelItem = new PopupServerItem('Hotel', this._running, { 'restartButton': true, 'launchButton': true });
     this.container.menu.addMenuItem(hotelItem);
 
     Mainloop.idle_add(Lang.bind(this, this._addServerItems));
@@ -165,6 +174,10 @@ const HotelManager = new Lang.Class({
     hotelItem.restartButton.connect('clicked', Lang.bind(this, function() {
       this._reloadHotel();
       this.container.menu.close();
+    }));
+
+    hotelItem.launchButton.connect('clicked', Lang.bind(this, function() {
+      this._openServerUrl('hotel');
     }));
 
     return true;
