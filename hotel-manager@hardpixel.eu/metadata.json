@@ -1,6 +1,8 @@
 {
   "name": "Hotel Manager",
-  "description": "Manage Hotel development servers",
+  "description": "Hotel Manager allows to start and stop the Hotel daemon and your development servers via a menu in the status area.",
   "uuid": "hotel-manager@hardpixel.eu",
-  "shell-version": ["3.18", "3.20", "3.22", "3.24"]
+  "url": "https://github.com/hardpixel/hotel-manager",
+  "shell-version": ["3.18", "3.20", "3.22", "3.24", "3.26"],
+  "version": -1
 }
