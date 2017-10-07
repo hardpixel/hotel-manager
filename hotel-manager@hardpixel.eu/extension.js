@@ -162,7 +162,13 @@ const HotelManager = new Lang.Class({
     this._running = this._checkHotel();
     this._entries = this._getServers();
 
-    let hotelItem = new PopupServerItem('Hotel', this._running, { 'restartButton': true, 'launchButton': true });
+    let options = {
+      'autoCloseMenu': true,
+      'restartButton': true,
+      'launchButton':  true
+    };
+
+    let hotelItem = new PopupServerItem('Hotel', this._running, options);
     this.container.menu.addMenuItem(hotelItem);
 
     Mainloop.idle_add(Lang.bind(this, this._addServerItems));
