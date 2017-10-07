@@ -140,13 +140,13 @@ var HotelManager = new Lang.Class({
 
         this.container.menu.addMenuItem(serverItem);
 
-        serverItem.connect('toggled', Lang.bind(this, function() {
-          this._toggleServer(id, !active);
+        serverItem.connect('toggled', Lang.bind(this, function(button, state) {
+          this._toggleServer(id, state);
+          this._setServerItemState(button, id);
         }));
 
         serverItem.restartButton.connect('clicked', Lang.bind(this, function() {
           this._reloadServer(id);
-          this.container.menu.close();
         }));
 
         serverItem.launchButton.connect('clicked', Lang.bind(this, function() {
@@ -154,6 +154,18 @@ var HotelManager = new Lang.Class({
         }));
       }));
     }
+  },
+
+  _setServerItemState: function(serverItem, server) {
+    serverItem.setSensitive(false);
+
+    Mainloop.timeout_add(500, Lang.bind(this, function() {
+      this._entries = this._getServers();
+      let curServer = this._entries[server];
+
+      serverItem.setToggleState(this._checkServer(curServer));
+      serverItem.setSensitive(true);
+    }));
   },
 
   _refresh: function() {
