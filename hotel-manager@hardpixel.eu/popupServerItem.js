@@ -58,16 +58,10 @@ var PopupServerItem = new Lang.Class({
   },
 
   activate: function(event) {
-    if (this._switch.actor.mapped) {
-      this.toggle();
-    }
-
-    if (event.type() == Clutter.EventType.KEY_PRESS && event.get_key_symbol() == Clutter.KEY_space) {
-      return;
-    }
-
     if (this._params.autoCloseMenu) {
       this.parent(event);
+    } else if (this._switch.actor.mapped) {
+      this.toggle();
     }
   }
 });
