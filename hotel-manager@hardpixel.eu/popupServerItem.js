@@ -3,7 +3,7 @@ const PopupMenu = imports.ui.popupMenu;
 const St        = imports.gi.St;
 const Clutter   = imports.gi.Clutter;
 
-const PopupServerItem = new Lang.Class({
+var PopupServerItem = new Lang.Class({
   Name: 'PopupServerItem',
   Extends: PopupMenu.PopupSwitchMenuItem,
   _params: {},

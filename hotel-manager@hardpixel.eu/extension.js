@@ -10,7 +10,7 @@ const HotelLauncher   = ExtensionUtils.getCurrentExtension();
 const PopupServerItem = HotelLauncher.imports.popupServerItem.PopupServerItem;
 const Util            = imports.misc.util;
 
-const HotelManager = new Lang.Class({
+var HotelManager = new Lang.Class({
   Name: 'HotelManager',
   _entries: {},
   _running: false,
