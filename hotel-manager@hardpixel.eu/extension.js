@@ -83,11 +83,6 @@ var HotelManager = new Lang.Class({
     Util.spawn([command, action]);
   },
 
-  _reloadHotel: function () {
-    this._toggleHotel(false);
-    this._toggleHotel(true);
-  },
-
   _checkServer: function (server) {
     let running = server['status'];
     return running == 'running';
@@ -98,11 +93,6 @@ var HotelManager = new Lang.Class({
     let url    = this._getUrl(action, id);
 
     GLib.spawn_command_line_sync('curl --request POST ' + url);
-  },
-
-  _reloadServer: function (id) {
-    this._toggleServer(id, false);
-    this._toggleServer(id, true);
   },
 
   _openServerUrl: function (id) {
@@ -145,10 +135,6 @@ var HotelManager = new Lang.Class({
           this._setServerItemState(button, id);
         }));
 
-        serverItem.restartButton.connect('clicked', Lang.bind(this, function() {
-          this._reloadServer(id);
-        }));
-
         serverItem.launchButton.connect('clicked', Lang.bind(this, function() {
           this._openServerUrl(id);
         }));
@@ -165,6 +151,17 @@ var HotelManager = new Lang.Class({
 
       serverItem.setToggleState(this._checkServer(curServer));
       serverItem.setSensitive(true);
+    }));
+  },
+
+  _setHotelItemState: function(hotelItem) {
+    hotelItem.setSensitive(false);
+
+    Mainloop.timeout_add(500, Lang.bind(this, function() {
+      this._running = this._checkHotel();
+
+      hotelItem.setToggleState(this._running);
+      hotelItem.setSensitive(true);
     }));
   },
 
@@ -185,20 +182,14 @@ var HotelManager = new Lang.Class({
 
     Mainloop.idle_add(Lang.bind(this, this._addServerItems));
 
-    hotelItem.connect('toggled', Lang.bind(this, function() {
-      this._toggleHotel(!this._running);
-    }));
-
-    hotelItem.restartButton.connect('clicked', Lang.bind(this, function() {
-      this._reloadHotel();
-      this.container.menu.close();
+    hotelItem.connect('toggled', Lang.bind(this, function(button, state) {
+      this._toggleHotel(state);
+      this._setHotelItemState(button);
     }));
 
     hotelItem.launchButton.connect('clicked', Lang.bind(this, function() {
       this._openServerUrl('hotel');
     }));
-
-    return true;
   },
 
   destroy: function() {
@@ -214,4 +205,5 @@ function enable() {
 
 function disable() {
   hotelManager.destroy();
+  hotelManager = null;
 }

@@ -12,15 +12,8 @@ var PopupServerItem = new Lang.Class({
     this._params = params;
     this.parent(text, active);
 
-    if (params.restartButton) {
-      this.restartButton = this._button('restart', 'view-refresh-symbolic');
-      this.actor.add(this.restartButton, { expand: false, x_align: St.Align.END });
-    }
-
-    if (params.launchButton) {
-      this.launchButton = this._button('launch', 'network-workgroup-symbolic');
-      this.actor.add(this.launchButton, { expand: false, x_align: St.Align.END });
-    }
+    this._restartButton();
+    this._launchButton();
   },
 
   _icon: function(icon_name) {
@@ -42,6 +35,26 @@ var PopupServerItem = new Lang.Class({
     button.child = this._icon(icon_name);
 
     return button;
+  },
+
+  _restartButton: function() {
+    if (this._params.restartButton) {
+      this.restartButton = this._button('restart', 'view-refresh-symbolic');
+      this.actor.add(this.restartButton, { expand: false, x_align: St.Align.END });
+
+      this.restartButton.connect('clicked', Lang.bind(this, function() {
+        this.setToggleState(false);
+        this.emit('toggled', false);
+        this.emit('toggled', true);
+      }));
+    }
+  },
+
+  _launchButton: function() {
+    if (this._params.launchButton) {
+      this.launchButton = this._button('launch', 'network-workgroup-symbolic');
+      this.actor.add(this.launchButton, { expand: false, x_align: St.Align.END });
+    }
   },
 
   activate: function(event) {
