@@ -72,8 +72,8 @@ var HotelManager = new Lang.Class({
   },
 
   _checkHotel: function () {
-    let running = GLib.spawn_command_line_sync('ps -ef').toString().match(/hotel/);
-    return running == 'hotel';
+    let running = GLib.spawn_command_line_sync('ps -ef').toString().match(/hotel\/lib\/daemon/);
+    return running == 'hotel/lib/daemon';
   },
 
   _toggleHotel: function (start) {
