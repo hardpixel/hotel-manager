@@ -14,9 +14,12 @@ var HotelManager = new Lang.Class({
   Name: 'HotelManager',
   _entries: {},
   _running: false,
-  _uri: 'http://localhost:2000',
+  _homeDir: GLib.get_home_dir(),
 
   _init: function() {
+    this._config = this._hotelConfig();
+    this._uri    = this._hotelUri();
+
     this._createContainer();
     this._refresh();
   },
@@ -39,17 +42,35 @@ var HotelManager = new Lang.Class({
     Main.panel.addToStatusArea('HotelManager', this.container);
   },
 
+  _hotelConfig: function() {
+    let config = this._homeDir + '/.hotel/conf.json';
+    let data   = { port: 2000, host: '127.0.0.1', tld: 'dev' };
+
+    if (GLib.file_test(config, GLib.FileTest.EXISTS)) {
+      data = GLib.file_get_contents(config)[1].toString();
+      data = JSON.parse(data);
+    }
+
+    return data;
+  },
+
+  _hotelUri: function() {
+    let host = this._config.host;
+    let port = this._config.port;
+
+    return host + ':' + port;
+  },
+
   _getCommand: function() {
     let command = 'hotel';
-    let homeDir = GLib.get_home_dir();
-    let hotelRc = homeDir + '/.hotelrc';
+    let hotelRc = this._homeDir + '/.hotelrc';
 
     if (GLib.file_test(hotelRc, GLib.FileTest.EXISTS)) {
       hotelRc = GLib.file_get_contents(hotelRc);
 
       if (hotelRc[0] == true) {
         let userCommand = hotelRc[1].toString().split("\n")[0];
-        userCommand = userCommand.replace('~', homeDir);
+        userCommand = userCommand.replace('~', this._homeDir);
 
         if (userCommand != '') {
           command = userCommand;
@@ -96,7 +117,7 @@ var HotelManager = new Lang.Class({
   },
 
   _openServerUrl: function (id) {
-    let url = 'http://' + id + '.dev';
+    let url = 'http://' + id + '.' + this._config.tld;
     Util.spawn(['xdg-open', url]);
   },
 
