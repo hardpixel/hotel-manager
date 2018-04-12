@@ -44,7 +44,7 @@ var HotelManager = new Lang.Class({
 
   _hotelConfig: function() {
     let config = this._homeDir + '/.hotel/conf.json';
-    let data   = { port: 2000, host: '127.0.0.1', tld: 'dev' };
+    let data   = { port: 2000, host: '127.0.0.1', tld: 'localhost' };
 
     if (GLib.file_test(config, GLib.FileTest.EXISTS)) {
       data = GLib.file_get_contents(config)[1].toString();
