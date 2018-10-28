@@ -7,6 +7,7 @@ const PopupMenu       = imports.ui.popupMenu;
 const St              = imports.gi.St;
 const ExtensionUtils  = imports.misc.extensionUtils;
 const HotelLauncher   = ExtensionUtils.getCurrentExtension();
+const Helpers         = HotelLauncher.imports.helpers;
 const PopupServerItem = HotelLauncher.imports.popupServerItem.PopupServerItem;
 const Util            = imports.misc.util;
 
@@ -14,7 +15,6 @@ var HotelManager = new Lang.Class({
   Name: 'HotelManager',
   _entries: {},
   _running: false,
-  _homeDir: GLib.get_home_dir(),
 
   _init: function() {
     this._config = this._hotelConfig();
@@ -34,24 +34,16 @@ var HotelManager = new Lang.Class({
 
     this.container.actor.add_actor(hbox);
     this.container.actor.add_style_class_name('panel-status-button');
-
-    this.container.actor.connect('button-press-event', Lang.bind(this, function() {
-      this._refresh();
-    }));
+    this.container.actor.connect('button-press-event', Lang.bind(this, this._refresh));
 
     Main.panel.addToStatusArea('HotelManager', this.container);
   },
 
   _hotelConfig: function() {
-    let config = this._homeDir + '/.hotel/conf.json';
+    let config = '~/.hotel/conf.json';
     let data   = { port: 2000, host: '127.0.0.1', tld: 'localhost' };
 
-    if (GLib.file_test(config, GLib.FileTest.EXISTS)) {
-      data = GLib.file_get_contents(config)[1].toString();
-      data = JSON.parse(data);
-    }
-
-    return data;
+    return Helpers.fileGetContents(config, data, true);
   },
 
   _hotelUri: function() {
@@ -62,23 +54,8 @@ var HotelManager = new Lang.Class({
   },
 
   _getCommand: function() {
-    let command = 'hotel';
-    let hotelRc = this._homeDir + '/.hotelrc';
-
-    if (GLib.file_test(hotelRc, GLib.FileTest.EXISTS)) {
-      hotelRc = GLib.file_get_contents(hotelRc);
-
-      if (hotelRc[0] == true) {
-        let userCommand = hotelRc[1].toString().split("\n")[0];
-        userCommand = userCommand.replace('~', this._homeDir);
-
-        if (userCommand != '') {
-          command = userCommand;
-        }
-      }
-    }
-
-    return command;
+    let command = Helpers.fileGetLine('~/.hotelrc', 0, 'hotel');
+    return Helpers.getFilePath(command);
   },
 
   _getUrl: function (action, id) {
@@ -88,12 +65,11 @@ var HotelManager = new Lang.Class({
       servers: '/_/servers'
     };
 
-    let path = this._uri + paths[action].toString().replace('${id}', id);
-    return path;
+    return this._uri + paths[action].replace('${id}', id);
   },
 
   _checkHotel: function () {
-    let running = GLib.spawn_command_line_sync('ps -ef').toString().match(/hotel\/lib\/daemon/);
+    let running = Helpers.commandGetOutput('ps -ef').match(/hotel\/lib\/daemon/);
     return running == 'hotel/lib/daemon';
   },
 
@@ -105,8 +81,7 @@ var HotelManager = new Lang.Class({
   },
 
   _checkServer: function (server) {
-    let running = server['status'];
-    return running == 'running';
+    return server['status'] == 'running';
   },
 
   _toggleServer: function (id, start) {
@@ -125,14 +100,8 @@ var HotelManager = new Lang.Class({
     let items = {};
 
     if (this._running) {
-      let url  = this._getUrl('servers');
-      let list = GLib.spawn_command_line_sync('curl ' + url);
-
-      try {
-        items = JSON.parse(list[1].toString());
-      } catch (e) {
-        items = {};
-      }
+      let url = this._getUrl('servers');
+      items = Helpers.commandGetOutput('curl ' + url, true);
     }
 
     return items;
