@@ -29,6 +29,10 @@ function fileGetContents(path, defaultValue = null, jsonConvert = false) {
     }
   }
 
+  if (fileData && !fileData.length) {
+    fileData = defaultValue;
+  }
+
   return fileData;
 }
 
