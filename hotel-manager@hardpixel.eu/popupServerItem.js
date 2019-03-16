@@ -1,16 +1,13 @@
 const Lang      = imports.lang;
 const PopupMenu = imports.ui.popupMenu;
 const St        = imports.gi.St;
-const Clutter   = imports.gi.Clutter;
 
 var PopupServerItem = new Lang.Class({
   Name: 'PopupServerItem',
-  Extends: PopupMenu.PopupSwitchMenuItem,
-  _params: {},
 
   _init: function(text, active, params) {
-    this._params = params;
-    this.parent(text, active);
+    this.params = params || {};
+    this.widget = new PopupMenu.PopupSwitchMenuItem(text, active);
 
     this._restartButton();
     this._launchButton();
@@ -38,30 +35,22 @@ var PopupServerItem = new Lang.Class({
   },
 
   _restartButton: function() {
-    if (this._params.restartButton) {
-      this.restartButton = this._button('restart', 'view-refresh-symbolic');
-      this.actor.add(this.restartButton, { expand: false, x_align: St.Align.END });
+    if (!this.params.restartButton) return;
 
-      this.restartButton.connect('clicked', Lang.bind(this, function() {
-        this.setToggleState(false);
-        this.emit('toggled', false);
-        this.emit('toggled', true);
-      }));
-    }
+    this.restartButton = this._button('restart', 'view-refresh-symbolic');
+    this.widget.actor.add(this.restartButton, { expand: false, x_align: St.Align.END });
+
+    this.restartButton.connect('clicked', Lang.bind(this, function() {
+      this.widget.setToggleState(false);
+      this.widget.emit('toggled', false);
+      this.widget.emit('toggled', true);
+    }));
   },
 
   _launchButton: function() {
-    if (this._params.launchButton) {
-      this.launchButton = this._button('launch', 'network-workgroup-symbolic');
-      this.actor.add(this.launchButton, { expand: false, x_align: St.Align.END });
-    }
-  },
+    if (!this.params.launchButton) return;
 
-  activate: function(event) {
-    if (this._params.autoCloseMenu) {
-      this.parent(event);
-    } else if (this._switch.actor.mapped) {
-      this.toggle();
-    }
+    this.launchButton = this._button('launch', 'network-workgroup-symbolic');
+    this.widget.actor.add(this.launchButton, { expand: false, x_align: St.Align.END });
   }
 });

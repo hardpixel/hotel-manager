@@ -13,6 +13,7 @@ const Util            = imports.misc.util;
 
 var HotelManager = new Lang.Class({
   Name: 'HotelManager',
+  Extends: PanelMenu.Button,
   _entries: {},
   _running: false,
 
@@ -20,23 +21,18 @@ var HotelManager = new Lang.Class({
     this._config = this._hotelConfig();
     this._uri    = this._hotelUri();
 
-    this._createContainer();
+    this.parent(0.0, 'HotelManager');
+
+    this.icon = new St.Icon({
+      icon_name: 'network-cellular-hspa-symbolic',
+      style_class: 'system-status-icon'
+    });
+
+    this.actor.add_actor(this.icon);
+
+    this.menu.connect('open-state-changed', Lang.bind(this, this._refresh));
+
     this._refresh();
-  },
-
-  _createContainer: function() {
-    this.container = new PanelMenu.Button()
-    PanelMenu.Button.prototype._init.call(this.container, 0.0);
-
-    let hbox = new St.BoxLayout({ style_class: 'panel-status-menu-box' });
-    let icon = new St.Icon({ icon_name: 'network-cellular-hspa-symbolic', style_class: 'system-status-icon' });
-    hbox.add_child(icon);
-
-    this.container.actor.add_actor(hbox);
-    this.container.actor.add_style_class_name('panel-status-button');
-    this.container.actor.connect('button-press-event', Lang.bind(this, this._refresh));
-
-    Main.panel.addToStatusArea('HotelManager', this.container);
   },
 
   _hotelConfig: function() {
@@ -111,16 +107,16 @@ var HotelManager = new Lang.Class({
     let servers = Object.keys(this._entries);
 
     if (servers.length) {
-      this.container.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+      this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
       servers.map(Lang.bind(this, function(id, index) {
         let server     = this._entries[id];
         let active     = this._checkServer(server);
         let serverItem = new PopupServerItem(id, active, { 'restartButton': true, 'launchButton': true });
 
-        this.container.menu.addMenuItem(serverItem);
+        this.menu.addMenuItem(serverItem.widget);
 
-        serverItem.connect('toggled', Lang.bind(this, function(button, state) {
+        serverItem.widget.connect('toggled', Lang.bind(this, function(button, state) {
           this._toggleServer(id, state);
           this._setServerItemState(button, id);
         }));
@@ -156,7 +152,7 @@ var HotelManager = new Lang.Class({
   },
 
   _refresh: function() {
-    this.container.menu.removeAll();
+    this.menu.removeAll();
 
     this._running = this._checkHotel();
     this._entries = this._getServers();
@@ -168,11 +164,11 @@ var HotelManager = new Lang.Class({
     };
 
     let hotelItem = new PopupServerItem('Hotel', this._running, options);
-    this.container.menu.addMenuItem(hotelItem);
+    this.menu.addMenuItem(hotelItem.widget);
 
     Mainloop.idle_add(Lang.bind(this, this._addServerItems));
 
-    hotelItem.connect('toggled', Lang.bind(this, function(button, state) {
+    hotelItem.widget.connect('toggled', Lang.bind(this, function(button, state) {
       this._toggleHotel(state);
       this._setHotelItemState(button);
     }));
@@ -180,10 +176,6 @@ var HotelManager = new Lang.Class({
     hotelItem.launchButton.connect('clicked', Lang.bind(this, function() {
       this._openServerUrl('hotel');
     }));
-  },
-
-  destroy: function() {
-    this.container.destroy();
   }
 });
 
@@ -191,6 +183,7 @@ let hotelManager;
 
 function enable() {
   hotelManager = new HotelManager();
+  Main.panel.addToStatusArea('HotelManager', hotelManager);
 }
 
 function disable() {
