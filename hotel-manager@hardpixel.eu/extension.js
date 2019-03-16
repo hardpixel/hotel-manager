@@ -77,7 +77,7 @@ var HotelManager = new Lang.Class({
   },
 
   _checkServer: function (server) {
-    return server['status'] == 'running';
+    return server.status && server.status == 'running';
   },
 
   _toggleServer: function (id, start) {
@@ -105,27 +105,29 @@ var HotelManager = new Lang.Class({
 
   _addServerItems: function () {
     let servers = Object.keys(this._entries);
+    if (!servers.length) return;
 
-    if (servers.length) {
-      this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+    let separator = new PopupMenu.PopupSeparatorMenuItem();
+    this.menu.addMenuItem(separator);
 
-      servers.map(Lang.bind(this, function(id, index) {
-        let server     = this._entries[id];
-        let active     = this._checkServer(server);
-        let serverItem = new PopupServerItem(id, active, { 'restartButton': true, 'launchButton': true });
+    servers.forEach(Lang.bind(this, function(id, index) {
+      let server     = this._entries[id];
+      let active     = this._checkServer(server);
+      let options    = { restartButton: true, launchButton: true };
+      let serverItem = new PopupServerItem(id, active, options);
 
-        this.menu.addMenuItem(serverItem.widget);
+      this.menu.addMenuItem(serverItem.widget);
 
-        serverItem.widget.connect('toggled', Lang.bind(this, function(button, state) {
-          this._toggleServer(id, state);
-          this._setServerItemState(button, id);
-        }));
-
-        serverItem.launchButton.connect('clicked', Lang.bind(this, function() {
-          this._openServerUrl(id);
-        }));
+      serverItem.widget.connect('toggled', Lang.bind(this, function(button, state) {
+        this._toggleServer(id, state);
+        this._setServerItemState(button, id);
       }));
-    }
+
+      serverItem.launchButton.connect('clicked', Lang.bind(this, function(event) {
+        this._openServerUrl(id);
+        this.menu.close();
+      }));
+    }));
   },
 
   _setServerItemState: function(serverItem, server) {
@@ -158,9 +160,9 @@ var HotelManager = new Lang.Class({
     this._entries = this._getServers();
 
     let options = {
-      'autoCloseMenu': true,
-      'restartButton': true,
-      'launchButton':  true
+      autoCloseMenu: true,
+      restartButton: true,
+      launchButton:  true
     };
 
     let hotelItem = new PopupServerItem('Hotel', this._running, options);
@@ -175,6 +177,7 @@ var HotelManager = new Lang.Class({
 
     hotelItem.launchButton.connect('clicked', Lang.bind(this, function() {
       this._openServerUrl('hotel');
+      this.menu.close();
     }));
   }
 });
