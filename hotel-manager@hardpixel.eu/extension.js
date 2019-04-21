@@ -186,7 +186,7 @@ let hotelManager;
 
 function enable() {
   hotelManager = new HotelManager();
-  Main.panel.addToStatusArea('HotelManager', hotelManager);
+  Main.panel.addToStatusArea('hotelManager', hotelManager);
 }
 
 function disable() {
