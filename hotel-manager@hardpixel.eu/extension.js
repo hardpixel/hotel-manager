@@ -81,14 +81,14 @@ var HotelManager = new GObject.Class({
     return server.status && server.status == 'running';
   },
 
-  _toggleServer (id, start) {
+  _toggleServer(id, start) {
     let action = start ? 'start' : 'stop';
     let url    = this._getUrl(action, id);
 
     GLib.spawn_command_line_sync('curl --request POST ' + url);
   },
 
-  _openServerUrl (id) {
+  _openServerUrl(id) {
     let url = 'http://' + id + '.' + this._config.tld;
     Util.spawn(['xdg-open', url]);
   },
