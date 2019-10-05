@@ -38,7 +38,7 @@ var PopupServerItem = new Lang.Class({
     if (!this.params.restartButton) return;
 
     this.restartButton = this._button('restart', 'view-refresh-symbolic');
-    this.widget.actor.add(this.restartButton, { expand: false, x_align: St.Align.END });
+    this.widget.add(this.restartButton, { expand: false, x_align: St.Align.END });
 
     this.restartButton.connect('clicked', Lang.bind(this, function() {
       this.widget.setToggleState(false);
@@ -51,6 +51,6 @@ var PopupServerItem = new Lang.Class({
     if (!this.params.launchButton) return;
 
     this.launchButton = this._button('launch', 'network-workgroup-symbolic');
-    this.widget.actor.add(this.launchButton, { expand: false, x_align: St.Align.END });
+    this.widget.add(this.launchButton, { expand: false, x_align: St.Align.END });
   }
 });
