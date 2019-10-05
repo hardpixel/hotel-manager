@@ -1,34 +1,33 @@
-const GLib            = imports.gi.GLib;
-const GObject         = imports.gi.GObject;
-const St              = imports.gi.St;
-const Main            = imports.ui.main;
-const PanelMenu       = imports.ui.panelMenu;
-const PopupMenu       = imports.ui.popupMenu;
-const ExtensionUtils  = imports.misc.extensionUtils;
-const HotelLauncher   = ExtensionUtils.getCurrentExtension();
-const HotelService    = HotelLauncher.imports.service.HotelService;
-const HotelServerItem = HotelLauncher.imports.widgets.HotelServerItem;
+const GLib            = imports.gi.GLib
+const GObject         = imports.gi.GObject
+const St              = imports.gi.St
+const Main            = imports.ui.main
+const PanelMenu       = imports.ui.panelMenu
+const PopupMenu       = imports.ui.popupMenu
+const ExtensionUtils  = imports.misc.extensionUtils
+const HotelLauncher   = ExtensionUtils.getCurrentExtension()
+const HotelService    = HotelLauncher.imports.service.HotelService
+const HotelServerItem = HotelLauncher.imports.widgets.HotelServerItem
 
 var HotelManager = new GObject.Class({
   Name: 'HotelManager',
   Extends: PanelMenu.Button,
 
   _init() {
-    this.service = new HotelService();
-    this.parent(0.0, 'HotelManager');
+    const icon_name   = 'network-cellular-hspa-symbolic'
+    const style_class = 'system-status-icon'
 
-    this.icon = new St.Icon({
-      icon_name: 'network-cellular-hspa-symbolic',
-      style_class: 'system-status-icon'
-    });
+    this.service = new HotelService()
+    this.parent(0.0, 'HotelManager')
 
-    this.add_actor(this.icon);
+    this.icon = new St.Icon({ icon_name, style_class })
+    this.add_actor(this.icon)
 
     this.menu.connect('open-state-changed', () => {
       this._refresh()
-    });
+    })
 
-    this._refresh();
+    this._refresh()
   },
 
   _addHotelItem() {
@@ -36,82 +35,82 @@ var HotelManager = new GObject.Class({
       autoCloseMenu: true,
       restartButton: true,
       launchButton:  true
-    };
+    }
 
-    let hotelItem = new HotelServerItem('Hotel', this.service.running, options);
-    this.menu.addMenuItem(hotelItem.widget);
+    let hotelItem = new HotelServerItem('Hotel', this.service.running, options)
+    this.menu.addMenuItem(hotelItem.widget)
 
     hotelItem.widget.connect('toggled', (button, state) => {
-      this.service.toggle(state);
-      this._setHotelItemState(button);
-    });
+      this.service.toggle(state)
+      this._setHotelItemState(button)
+    })
 
     hotelItem.launchButton.connect('clicked', () => {
-      this.service.openServerUrl('hotel');
-      this.menu.close();
-    });
+      this.service.openServerUrl('hotel')
+      this.menu.close()
+    })
   },
 
   _addServerItem({ id }, index) {
-    let active     = this.service.serverRunning(id);
-    let options    = { restartButton: true, launchButton: true };
-    let serverItem = new HotelServerItem(id, active, options);
+    let active     = this.service.serverRunning(id)
+    let options    = { restartButton: true, launchButton: true }
+    let serverItem = new HotelServerItem(id, active, options)
 
-    this.menu.addMenuItem(serverItem.widget);
+    this.menu.addMenuItem(serverItem.widget)
 
     serverItem.widget.connect('toggled', (button, state) => {
-      this.service.toggleServer(id, state);
-      this._setServerItemState(button, id);
-    });
+      this.service.toggleServer(id, state)
+      this._setServerItemState(button, id)
+    })
 
     serverItem.launchButton.connect('clicked', (event) => {
-      this.service.openServerUrl(id);
-      this.menu.close();
-    });
+      this.service.openServerUrl(id)
+      this.menu.close()
+    })
   },
 
   _addServerItems() {
-    const servers = this.service.servers;
-    if (!servers.length) return;
+    const servers = this.service.servers
+    if (!servers.length) return
 
-    const separator = new PopupMenu.PopupSeparatorMenuItem();
-    this.menu.addMenuItem(separator);
+    const separator = new PopupMenu.PopupSeparatorMenuItem()
+    this.menu.addMenuItem(separator)
 
     servers.forEach((server, index) => {
       GLib.idle_add(0, () => { this._addServerItem(server, index) })
-    });
+    })
   },
 
   _setServerItemState(serverItem, id) {
-    serverItem.setSensitive(false);
+    serverItem.setSensitive(false)
 
-    const active = this.service.serverRunning(id);
-    serverItem.setToggleState(active);
+    const active = this.service.serverRunning(id)
+    serverItem.setToggleState(active)
 
-    serverItem.setSensitive(true);
+    serverItem.setSensitive(true)
   },
 
   _setHotelItemState(hotelItem) {
-    hotelItem.setToggleState(this.service.running);
-    hotelItem.setSensitive(true);
+    hotelItem.setToggleState(this.service.running)
+    hotelItem.setSensitive(true)
   },
 
   _refresh() {
-    this.menu.removeAll();
+    this.menu.removeAll()
 
-    this._addHotelItem();
-    this._addServerItems();
+    this._addHotelItem()
+    this._addServerItems()
   }
-});
+})
 
-let hotelManager;
+let hotelManager
 
 function enable() {
-  hotelManager = new HotelManager();
-  Main.panel.addToStatusArea('hotelManager', hotelManager);
+  hotelManager = new HotelManager()
+  Main.panel.addToStatusArea('hotelManager', hotelManager)
 }
 
 function disable() {
-  hotelManager.destroy();
-  hotelManager = null;
+  hotelManager.destroy()
+  hotelManager = null
 }

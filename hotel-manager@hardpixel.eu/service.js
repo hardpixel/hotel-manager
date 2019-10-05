@@ -1,5 +1,5 @@
 const Soup           = imports.gi.Soup
-const Util           = imports.misc.util;
+const Util           = imports.misc.util
 const ExtensionUtils = imports.misc.extensionUtils
 const HotelLauncher  = ExtensionUtils.getCurrentExtension()
 const Helpers        = HotelLauncher.imports.helpers

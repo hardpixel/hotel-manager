@@ -1,61 +1,61 @@
-const ByteArray = imports.byteArray;
-const GLib      = imports.gi.GLib;
+const ByteArray = imports.byteArray
+const GLib      = imports.gi.GLib
 
 function toString(charCode) {
-  return ByteArray.toString(charCode);
+  return ByteArray.toString(charCode)
 }
 
 function toJSON(string) {
   try {
-    return JSON.parse(string);
+    return JSON.parse(string)
   } catch (e) {
-    return {};
+    return {}
   }
 }
 
 function getFilePath(path) {
-  return path.replace('~', GLib.get_home_dir());
+  return path.replace('~', GLib.get_home_dir())
 }
 
 function fileGetContents(path, defaultValue = null, jsonConvert = false) {
-  let filePath = getFilePath(path);
-  let fileData = defaultValue;
+  let filePath = getFilePath(path)
+  let fileData = defaultValue
 
   if (GLib.file_test(filePath, GLib.FileTest.EXISTS)) {
-    let data = GLib.file_get_contents(filePath);
-    fileData = toString(data[1]);
+    let data = GLib.file_get_contents(filePath)
+    fileData = toString(data[1])
 
     if (jsonConvert) {
-      fileData = toJSON(fileData);
+      fileData = toJSON(fileData)
     }
   }
 
   if (fileData && !fileData.length) {
-    fileData = defaultValue;
+    fileData = defaultValue
   }
 
-  return fileData;
+  return fileData
 }
 
 function fileGetLine(path, line, defaultValue = null) {
-  let fileData  = fileGetContents(path, '');
-  let fileLine  = fileData.split("\n")[line];
-  let lineValue = defaultValue;
+  let fileData  = fileGetContents(path, '')
+  let fileLine  = fileData.split("\n")[line]
+  let lineValue = defaultValue
 
   if (fileLine != '') {
-    lineValue = fileLine;
+    lineValue = fileLine
   }
 
-  return lineValue;
+  return lineValue
 }
 
 function commandGetOutput(command, jsonConvert = false) {
-  let outputArr = GLib.spawn_command_line_sync(command);
-  let outputVal = toString(outputArr[1]);
+  let outputArr = GLib.spawn_command_line_sync(command)
+  let outputVal = toString(outputArr[1])
 
   if (jsonConvert) {
-    outputVal = toJSON(outputVal);
+    outputVal = toJSON(outputVal)
   }
 
-  return outputVal;
+  return outputVal
 }
