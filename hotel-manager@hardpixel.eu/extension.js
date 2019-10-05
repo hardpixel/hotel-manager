@@ -8,52 +8,51 @@ const HotelLauncher   = ExtensionUtils.getCurrentExtension()
 const HotelService    = HotelLauncher.imports.service.HotelService
 const HotelServerItem = HotelLauncher.imports.widgets.HotelServerItem
 
-var HotelManager = new GObject.Class({
-  Name: 'HotelManager',
-  Extends: PanelMenu.Button,
+var HotelManager = GObject.registerClass(
+  class HotelManager extends PanelMenu.Button {
+    _init() {
+      const icon_name   = 'network-cellular-hspa-symbolic'
+      const style_class = 'system-status-icon'
 
-  _init() {
-    const icon_name   = 'network-cellular-hspa-symbolic'
-    const style_class = 'system-status-icon'
+      this.service = new HotelService()
+      super._init(0.0, null, false)
 
-    this.service = new HotelService()
-    this.parent(0.0, 'HotelManager')
+      this.icon = new St.Icon({ icon_name, style_class })
+      this.add_actor(this.icon)
 
-    this.icon = new St.Icon({ icon_name, style_class })
-    this.add_actor(this.icon)
+      this.menu.connect('open-state-changed', () => {
+        this._refresh()
+      })
 
-    this.menu.connect('open-state-changed', () => {
       this._refresh()
-    })
+    }
 
-    this._refresh()
-  },
-
-  _addHotelItem() {
-    const item = new HotelServerItem(this.menu, this.service)
-    this.menu.addMenuItem(item.widget)
-  },
-
-  _addServerItems() {
-    const servers = this.service.servers
-    if (!servers.length) return
-
-    const separator = new PopupMenu.PopupSeparatorMenuItem()
-    this.menu.addMenuItem(separator)
-
-    servers.forEach((server) => {
-      const item = new HotelServerItem(this.menu, server)
+    _addHotelItem() {
+      const item = new HotelServerItem(this.menu, this.service)
       this.menu.addMenuItem(item.widget)
-    })
-  },
+    }
 
-  _refresh() {
-    this.menu.removeAll()
+    _addServerItems() {
+      const servers = this.service.servers
+      if (!servers.length) return
 
-    this._addHotelItem()
-    this._addServerItems()
+      const separator = new PopupMenu.PopupSeparatorMenuItem()
+      this.menu.addMenuItem(separator)
+
+      servers.forEach((server) => {
+        const item = new HotelServerItem(this.menu, server)
+        this.menu.addMenuItem(item.widget)
+      })
+    }
+
+    _refresh() {
+      this.menu.removeAll()
+
+      this._addHotelItem()
+      this._addServerItems()
+    }
   }
-})
+)
 
 let hotelManager
 
