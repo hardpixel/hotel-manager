@@ -1,6 +1,5 @@
 const GLib      = imports.gi.GLib
 const GObject   = imports.gi.GObject
-const Clutter   = imports.gi.Clutter
 const St        = imports.gi.St
 const PopupMenu = imports.ui.popupMenu
 
