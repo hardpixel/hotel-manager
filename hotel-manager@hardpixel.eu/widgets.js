@@ -13,13 +13,8 @@ var HotelServerItem = new GObject.Class({
     this._launchButton();
   },
 
-  _icon(icon_name) {
-    let icon = new St.Icon({ icon_name: icon_name });
-    return icon;
-  },
-
   _button(button_name, icon_name) {
-    let options = {
+    const options = {
       x_align:         1,
       reactive:        true,
       can_focus:       true,
@@ -28,8 +23,8 @@ var HotelServerItem = new GObject.Class({
       style_class:     'system-menu-action hotel-manager-button'
     };
 
-    let button   = new St.Button(options);
-    button.child = this._icon(icon_name);
+    const button = new St.Button(options);
+    button.child = new St.Icon({ icon_name: icon_name });
 
     return button;
   },

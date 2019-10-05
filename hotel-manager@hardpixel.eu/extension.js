@@ -104,6 +104,46 @@ var HotelManager = new GObject.Class({
     return items;
   },
 
+  _addHotelItem() {
+    let options = {
+      autoCloseMenu: true,
+      restartButton: true,
+      launchButton:  true
+    };
+
+    let hotelItem = new HotelServerItem('Hotel', this._running, options);
+    this.menu.addMenuItem(hotelItem.widget);
+
+    hotelItem.widget.connect('toggled', (button, state) => {
+      this._toggleHotel(state);
+      this._setHotelItemState(button);
+    });
+
+    hotelItem.launchButton.connect('clicked', () => {
+      this._openServerUrl('hotel');
+      this.menu.close();
+    });
+  },
+
+  _addServerItem(id, index) {
+    let server     = this._entries[id];
+    let active     = this._checkServer(server);
+    let options    = { restartButton: true, launchButton: true };
+    let serverItem = new HotelServerItem(id, active, options);
+
+    this.menu.addMenuItem(serverItem.widget);
+
+    serverItem.widget.connect('toggled', (button, state) => {
+      this._toggleServer(id, state);
+      this._setServerItemState(button, id);
+    });
+
+    serverItem.launchButton.connect('clicked', (event) => {
+      this._openServerUrl(id);
+      this.menu.close();
+    });
+  },
+
   _addServerItems() {
     let servers = Object.keys(this._entries);
     if (!servers.length) return;
@@ -112,22 +152,7 @@ var HotelManager = new GObject.Class({
     this.menu.addMenuItem(separator);
 
     servers.forEach((id, index) => {
-      let server     = this._entries[id];
-      let active     = this._checkServer(server);
-      let options    = { restartButton: true, launchButton: true };
-      let serverItem = new HotelServerItem(id, active, options);
-
-      this.menu.addMenuItem(serverItem.widget);
-
-      serverItem.widget.connect('toggled', (button, state) => {
-        this._toggleServer(id, state);
-        this._setServerItemState(button, id);
-      });
-
-      serverItem.launchButton.connect('clicked', (event) => {
-        this._openServerUrl(id);
-        this.menu.close();
-      });
+      GLib.idle_add(0, () => { this._addServerItem(id, index) })
     });
   },
 
@@ -154,26 +179,8 @@ var HotelManager = new GObject.Class({
     this._running = this._checkHotel();
     this._entries = this._getServers();
 
-    let options = {
-      autoCloseMenu: true,
-      restartButton: true,
-      launchButton:  true
-    };
-
-    let hotelItem = new HotelServerItem('Hotel', this._running, options);
-    this.menu.addMenuItem(hotelItem.widget);
-
+    this._addHotelItem();
     this._addServerItems();
-
-    hotelItem.widget.connect('toggled', (button, state) => {
-      this._toggleHotel(state);
-      this._setHotelItemState(button);
-    });
-
-    hotelItem.launchButton.connect('clicked', () => {
-      this._openServerUrl('hotel');
-      this.menu.close();
-    });
   }
 });
 
