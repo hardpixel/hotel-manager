@@ -1,92 +1,67 @@
 const GLib      = imports.gi.GLib
 const GObject   = imports.gi.GObject
+const Clutter   = imports.gi.Clutter
 const St        = imports.gi.St
 const PopupMenu = imports.ui.popupMenu
 
-var HotelServerItem = new GObject.Class({
-  Name: 'HotelServerItem',
+var HotelServerItem = GObject.registerClass({
+  Signals: { close: {} }
+}, class HotelServerItem extends PopupMenu.PopupSwitchMenuItem {
+    _init(server) {
+      this.server = server
+      super._init(server.name, server.running)
 
-  _init(menu, server) {
-    this.menu   = menu
-    this.server = server
+      this._addButton('restart', {
+        icon_name: 'view-refresh-symbolic',
+        callback:  this._onRestart
+      })
 
-    this._switchButton()
-    this._restartButton()
-    this._launchButton()
-  },
-
-  get label() {
-    return this.server.name
-  },
-
-  get state() {
-    return this.server.running
-  },
-
-  _addButton(button_name, icon_name) {
-    const options = {
-      x_align:         1,
-      reactive:        true,
-      can_focus:       true,
-      track_hover:     true,
-      accessible_name: button_name,
-      style_class:     'system-menu-action hotel-manager-button'
+      this._addButton('launch', {
+        icon_name: 'network-workgroup-symbolic',
+        callback:  this._onLaunch
+      })
     }
 
-    const button = new St.Button(options)
-    button.child = new St.Icon({ icon_name })
-
-    this.widget.add(button, {
-      expand:  false,
-      x_align: St.Align.END
-    })
-
-    return button
-  },
-
-  _switchButton() {
-    this.widget = new PopupMenu.PopupSwitchMenuItem(this.label, this.state)
-
-    this.widget.connect('toggled', () => {
+    toggle() {
       this.server.toggle()
-      this.widget.setToggleState(this.state)
-    })
-  },
+      this.syncToggleState()
+    }
 
-  _restartButton() {
-    const button = this._addButton('restart', 'view-refresh-symbolic')
+    syncToggleState() {
+      this.setToggleState(this.server.running)
+    }
 
-    button.connect('clicked', () => {
-      this.widget.setSensitive(false)
+    _addButton(button_name, { icon_name, callback }) {
+      const button = new St.Button({
+        x_align:         1,
+        reactive:        true,
+        can_focus:       true,
+        track_hover:     true,
+        accessible_name: button_name,
+        style_class:     'system-menu-action hotel-manager-button'
+      })
 
-      if (this.state) {
-        this.server.stop()
-        this.widget.setToggleState(false)
+      button.child = new St.Icon({ icon_name })
 
-        GLib.timeout_add(0, 500, () => {
-          this.server.start()
-          return false
-        })
+      button.connect('clicked', () => {
+        callback.call(this)
+        this.emit('close')
+      })
 
-        GLib.timeout_add(0, 1000, () => {
-          this.widget.setToggleState(this.state)
-          this.widget.setSensitive(true)
+      this.add(button, { expand: false, x_align: St.Align.END })
+    }
 
-          return false
-        })
-      } else {
+    _onRestart() {
+      this.server.stop()
+
+      GLib.timeout_add(0, 1000, () => {
         this.server.start()
-        this.menu.close()
-      }
-    })
-  },
+        return false
+      })
+    }
 
-  _launchButton() {
-    const button = this._addButton('launch', 'network-workgroup-symbolic')
-
-    button.connect('clicked', () => {
+    _onLaunch() {
       this.server.open()
-      this.menu.close()
-    })
+    }
   }
-})
+)

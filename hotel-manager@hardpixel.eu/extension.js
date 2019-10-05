@@ -28,8 +28,10 @@ var HotelManager = GObject.registerClass(
     }
 
     _addHotelItem() {
-      const item = new HotelServerItem(this.menu, this.service)
-      this.menu.addMenuItem(item.widget)
+      const item = new HotelServerItem(this.service)
+      item.connect('close', () => this.menu.close())
+
+      this.menu.addMenuItem(item)
     }
 
     _addServerItems() {
@@ -40,8 +42,10 @@ var HotelManager = GObject.registerClass(
       this.menu.addMenuItem(separator)
 
       servers.forEach((server) => {
-        const item = new HotelServerItem(this.menu, server)
-        this.menu.addMenuItem(item.widget)
+        const item = new HotelServerItem(server)
+        item.connect('close', () => this.menu.close())
+
+        this.menu.addMenuItem(item)
       })
     }
 
