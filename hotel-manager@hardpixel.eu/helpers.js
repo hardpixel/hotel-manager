@@ -1,7 +1,8 @@
-const GLib = imports.gi.GLib;
+const ByteArray = imports.byteArray;
+const GLib      = imports.gi.GLib;
 
 function toString(charCode) {
-  return String.fromCharCode.apply(null, charCode);
+  return ByteArray.toString(charCode);
 }
 
 function toJSON(string) {
