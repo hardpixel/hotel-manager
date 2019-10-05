@@ -7,7 +7,7 @@ const PopupMenu       = imports.ui.popupMenu;
 const ExtensionUtils  = imports.misc.extensionUtils;
 const HotelLauncher   = ExtensionUtils.getCurrentExtension();
 const Helpers         = HotelLauncher.imports.helpers;
-const PopupServerItem = HotelLauncher.imports.popupServerItem.PopupServerItem;
+const HotelServerItem = HotelLauncher.imports.widgets.HotelServerItem;
 const Util            = imports.misc.util;
 
 var HotelManager = new GObject.Class({
@@ -115,7 +115,7 @@ var HotelManager = new GObject.Class({
       let server     = this._entries[id];
       let active     = this._checkServer(server);
       let options    = { restartButton: true, launchButton: true };
-      let serverItem = new PopupServerItem(id, active, options);
+      let serverItem = new HotelServerItem(id, active, options);
 
       this.menu.addMenuItem(serverItem.widget);
 
@@ -160,7 +160,7 @@ var HotelManager = new GObject.Class({
       launchButton:  true
     };
 
-    let hotelItem = new PopupServerItem('Hotel', this._running, options);
+    let hotelItem = new HotelServerItem('Hotel', this._running, options);
     this.menu.addMenuItem(hotelItem.widget);
 
     this._addServerItems();

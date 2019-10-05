@@ -2,8 +2,8 @@ const GObject   = imports.gi.GObject;
 const St        = imports.gi.St;
 const PopupMenu = imports.ui.popupMenu;
 
-var PopupServerItem = new GObject.Class({
-  Name: 'PopupServerItem',
+var HotelServerItem = new GObject.Class({
+  Name: 'HotelServerItem',
 
   _init(text, active, params) {
     this.params = params || {};
