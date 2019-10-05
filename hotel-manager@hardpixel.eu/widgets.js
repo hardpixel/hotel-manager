@@ -5,8 +5,7 @@ const PopupMenu = imports.ui.popupMenu
 var HotelServerItem = new GObject.Class({
   Name: 'HotelServerItem',
 
-  _init(text, active, params) {
-    this.params = params || {}
+  _init(text, active) {
     this.widget = new PopupMenu.PopupSwitchMenuItem(text, active)
 
     this._restartButton()
@@ -30,8 +29,6 @@ var HotelServerItem = new GObject.Class({
   },
 
   _restartButton() {
-    if (!this.params.restartButton) return
-
     this.restartButton = this._button('restart', 'view-refresh-symbolic')
     this.widget.add(this.restartButton, { expand: false, x_align: St.Align.END })
 
@@ -43,8 +40,6 @@ var HotelServerItem = new GObject.Class({
   },
 
   _launchButton() {
-    if (!this.params.launchButton) return
-
     this.launchButton = this._button('launch', 'network-workgroup-symbolic')
     this.widget.add(this.launchButton, { expand: false, x_align: St.Align.END })
   }

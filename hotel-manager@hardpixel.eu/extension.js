@@ -31,13 +31,7 @@ var HotelManager = new GObject.Class({
   },
 
   _addHotelItem() {
-    let options = {
-      autoCloseMenu: true,
-      restartButton: true,
-      launchButton:  true
-    }
-
-    let hotelItem = new HotelServerItem('Hotel', this.service.running, options)
+    const hotelItem = new HotelServerItem('Hotel', this.service.running)
     this.menu.addMenuItem(hotelItem.widget)
 
     hotelItem.widget.connect('toggled', (button, state) => {
@@ -52,9 +46,8 @@ var HotelManager = new GObject.Class({
   },
 
   _addServerItem({ id }, index) {
-    let active     = this.service.serverRunning(id)
-    let options    = { restartButton: true, launchButton: true }
-    let serverItem = new HotelServerItem(id, active, options)
+    const active     = this.service.serverRunning(id)
+    const serverItem = new HotelServerItem(id, active)
 
     this.menu.addMenuItem(serverItem.widget)
 
