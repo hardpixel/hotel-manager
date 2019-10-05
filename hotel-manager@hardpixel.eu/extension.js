@@ -1,4 +1,3 @@
-const GLib            = imports.gi.GLib
 const GObject         = imports.gi.GObject
 const St              = imports.gi.St
 const Main            = imports.ui.main
@@ -31,35 +30,8 @@ var HotelManager = new GObject.Class({
   },
 
   _addHotelItem() {
-    const hotelItem = new HotelServerItem('Hotel', this.service.running)
-    this.menu.addMenuItem(hotelItem.widget)
-
-    hotelItem.widget.connect('toggled', (button, state) => {
-      this.service.toggle(state)
-      this._setHotelItemState(button)
-    })
-
-    hotelItem.launchButton.connect('clicked', () => {
-      this.service.openServerUrl('hotel')
-      this.menu.close()
-    })
-  },
-
-  _addServerItem({ id }, index) {
-    const active     = this.service.serverRunning(id)
-    const serverItem = new HotelServerItem(id, active)
-
-    this.menu.addMenuItem(serverItem.widget)
-
-    serverItem.widget.connect('toggled', (button, state) => {
-      this.service.toggleServer(id, state)
-      this._setServerItemState(button, id)
-    })
-
-    serverItem.launchButton.connect('clicked', (event) => {
-      this.service.openServerUrl(id)
-      this.menu.close()
-    })
+    const item = new HotelServerItem(this.menu, this.service)
+    this.menu.addMenuItem(item.widget)
   },
 
   _addServerItems() {
@@ -69,23 +41,10 @@ var HotelManager = new GObject.Class({
     const separator = new PopupMenu.PopupSeparatorMenuItem()
     this.menu.addMenuItem(separator)
 
-    servers.forEach((server, index) => {
-      GLib.idle_add(0, () => { this._addServerItem(server, index) })
+    servers.forEach((server) => {
+      const item = new HotelServerItem(this.menu, server)
+      this.menu.addMenuItem(item.widget)
     })
-  },
-
-  _setServerItemState(serverItem, id) {
-    serverItem.setSensitive(false)
-
-    const active = this.service.serverRunning(id)
-    serverItem.setToggleState(active)
-
-    serverItem.setSensitive(true)
-  },
-
-  _setHotelItemState(hotelItem) {
-    hotelItem.setToggleState(this.service.running)
-    hotelItem.setSensitive(true)
   },
 
   _refresh() {

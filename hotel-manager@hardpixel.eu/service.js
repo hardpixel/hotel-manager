@@ -76,8 +76,42 @@ class HotelSession {
   }
 }
 
+class HotelServer {
+  constructor(name, data, { config, session }) {
+    this.name    = name
+    this.data    = Object(data)
+    this.config  = config
+    this.session = session
+  }
+
+  get running() {
+    return this.data.status == 'running'
+  }
+
+  start() {
+    this.session.post(`servers/${this.name}/start`)
+  }
+
+  stop() {
+    this.session.post(`servers/${this.name}/stop`)
+  }
+
+  toggle() {
+    if (this.running) {
+      this.stop()
+    } else {
+      this.start()
+    }
+  }
+
+  open() {
+    Util.spawn(['xdg-open', `http://${this.name}.${this.config.tld}`])
+  }
+}
+
 var HotelService = class HotelService {
   constructor() {
+    this.name    = 'Hotel'
     this.config  = new HotelConfig()
     this.session = new HotelSession(this.config)
   }
@@ -89,7 +123,10 @@ var HotelService = class HotelService {
 
   get servers() {
     const servers = this.session.get('servers') || {}
-    return Object.keys(servers).map(id => ({ id, ...servers[id] }))
+
+    return Object.keys(servers).map(name => {
+      return new HotelServer(name, servers[name], this)
+    })
   }
 
   get command() {
@@ -105,38 +142,15 @@ var HotelService = class HotelService {
     Util.spawn([this.command, 'stop'])
   }
 
-  toggle(activate) {
-    if (activate) {
-      this.start()
-    } else {
+  toggle() {
+    if (this.running) {
       this.stop()
-    }
-  }
-
-  serverRunning(serverId) {
-    const server = this.servers.find(({ id }) => id == serverId)
-    return server && server.status == 'running'
-  }
-
-  startServer(id) {
-    const msg = this.session.post(`servers/${id}/start`)
-    return msg.status_code == Soup.Status.OK
-  }
-
-  stopServer(id) {
-    const msg = this.session.post(`servers/${id}/stop`)
-    return msg.status_code == Soup.Status.OK
-  }
-
-  toggleServer(id, activate) {
-    if (activate) {
-      return this.startServer(id)
     } else {
-      return this.stopServer(id)
+      this.start()
     }
   }
 
-  openServerUrl(id) {
-    Util.spawn(['xdg-open', `http://${id}.${this.config.tld}`])
+  open() {
+    Util.spawn(['xdg-open', `http://hotel.${this.config.tld}`])
   }
 }
