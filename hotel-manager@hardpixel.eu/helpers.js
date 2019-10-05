@@ -48,14 +48,3 @@ function fileGetLine(path, line, defaultValue = null) {
 
   return lineValue
 }
-
-function commandGetOutput(command, jsonConvert = false) {
-  let outputArr = GLib.spawn_command_line_sync(command)
-  let outputVal = toString(outputArr[1])
-
-  if (jsonConvert) {
-    outputVal = toJSON(outputVal)
-  }
-
-  return outputVal
-}

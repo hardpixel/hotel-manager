@@ -53,14 +53,10 @@ class HotelSession {
     this.session.send_message(msg)
 
     if (type == 'GET') {
-      try {
-        return JSON.parse(msg.response_body.data)
-      } catch (e) {
-        return null
-      }
+      return Helpers.toJSON(msg.response_body.data)
+    } else {
+      return msg
     }
-
-    return msg
   }
 
   get(path) {
