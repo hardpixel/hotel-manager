@@ -8,7 +8,7 @@ var HotelServerItem = GObject.registerClass({
 }, class HotelServerItem extends PopupMenu.PopupSwitchMenuItem {
     _init(server) {
       this.server = server
-      super._init(server.name, server.running)
+      super._init(server.name, server.running, { style_class: 'hotel-manager-item' })
 
       this._addButton('restart', {
         icon_name: 'view-refresh-symbolic',
@@ -40,7 +40,7 @@ var HotelServerItem = GObject.registerClass({
         style_class:     'system-menu-action hotel-manager-button'
       })
 
-      button.child = new St.Icon({ icon_name })
+      button.child = new St.Icon({ icon_name, style_class: 'popup-menu-icon' })
 
       button.connect('clicked', () => {
         callback.call(this)
