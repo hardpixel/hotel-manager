@@ -16,7 +16,7 @@ var HotelServerItem = GObject.registerClass({
       })
 
       this._addButton('launch', {
-        icon_name: 'network-workgroup-symbolic',
+        icon_name: 'web-browser-symbolic',
         callback:  this._onLaunch
       })
     }
