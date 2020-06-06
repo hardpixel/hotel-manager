@@ -30,7 +30,7 @@ function fileGetContents(path, defaultValue = null, jsonConvert = false) {
     }
   }
 
-  if (fileData && !fileData.length) {
+  if (!fileData) {
     fileData = defaultValue
   }
 
