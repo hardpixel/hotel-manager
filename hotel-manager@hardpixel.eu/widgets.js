@@ -47,7 +47,7 @@ var HotelServerItem = GObject.registerClass({
         this.emit('close')
       })
 
-      this.add(button, { expand: false, x_align: St.Align.END })
+      this.add_child(button)
     }
 
     _onRestart() {
