@@ -15,11 +15,14 @@ If Hotel is not globally installed, add a `.hotelrc` file in your home directory
 ### Gnome Shell Extensions
 The easiest way to install this extension is via the official [Gnome Shell Extensions](https://extensions.gnome.org) resource page [here](https://extensions.gnome.org/extension/1285/hotel-manager).
 
-### Arch Linux
-[AUR package](https://aur.archlinux.org/packages/gnome-shell-extension-hotel-manager)
+### Packages
+Arch Linux: [AUR package](https://aur.archlinux.org/packages/gnome-shell-extension-hotel-manager)
+
+## Contributing
+Bug reports and pull requests are welcome on GitHub at https://github.com/hardpixel/hotel-manager.
 
 ## License
-[GPLv3](http://www.gnu.org/licenses/gpl-3.0.en.html)
+Hotel Manager is available as open source under the terms of the [GPLv3](http://www.gnu.org/licenses/gpl-3.0.en.html)
 
 ## Credits
 Inspired by the Gnome Shell extension [Services Systemd](https://github.com/petres/gnome-shell-extension-services-systemd/).
