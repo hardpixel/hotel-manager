@@ -1,5 +1,5 @@
 # Hotel Manager
-Gnome Shell extension to manage [Hotel](https://github.com/typicode/hotel) development servers
+Gnome Shell extension to manage [Hotel](https://github.com/typicode/hotel) development servers.
 
 ## About
 Hotel Manager is a [Gnome](https://www.gnome.org/) Shell extension which
