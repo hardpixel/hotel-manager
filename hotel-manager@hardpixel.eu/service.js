@@ -126,8 +126,7 @@ var HotelService = class HotelService {
   }
 
   get command() {
-    const command = Helpers.fileGetLine('~/.hotelrc', 0, 'hotel')
-    return Helpers.getFilePath(command)
+    return Helpers.findProgramPath()
   }
 
   start() {

@@ -17,6 +17,24 @@ function getFilePath(path) {
   return path.replace('~', GLib.get_home_dir())
 }
 
+function configProgramPath() {
+  const command = fileGetLine('~/.hotelrc', 0, 'hotel')
+  return getFilePath(command)
+}
+
+function userProgramPath(folder) {
+  const path = GLib.build_filenamev([getFilePath(folder), 'hotel'])
+  return GLib.file_test(path, GLib.FileTest.EXISTS) && path
+}
+
+function findProgramPath() {
+  return GLib.find_program_in_path('hotel') ||
+    userProgramPath('~/.local/bin')         ||
+    userProgramPath('~/.yarn/bin')          ||
+    userProgramPath('~/.node_modules/bin')  ||
+    configProgramPath()
+}
+
 function fileGetContents(path, defaultValue = null, jsonConvert = false) {
   let filePath = getFilePath(path)
   let fileData = defaultValue
