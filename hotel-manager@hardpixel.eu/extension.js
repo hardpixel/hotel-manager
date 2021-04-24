@@ -3,10 +3,9 @@ const St              = imports.gi.St
 const Main            = imports.ui.main
 const PanelMenu       = imports.ui.panelMenu
 const PopupMenu       = imports.ui.popupMenu
-const ExtensionUtils  = imports.misc.extensionUtils
-const HotelLauncher   = ExtensionUtils.getCurrentExtension()
-const HotelService    = HotelLauncher.imports.service.HotelService
-const HotelServerItem = HotelLauncher.imports.widgets.HotelServerItem
+const Me              = imports.misc.extensionUtils.getCurrentExtension()
+const HotelService    = Me.imports.service.HotelService
+const HotelServerItem = Me.imports.widgets.HotelServerItem
 
 var HotelManager = GObject.registerClass(
   class HotelManager extends PanelMenu.Button {
