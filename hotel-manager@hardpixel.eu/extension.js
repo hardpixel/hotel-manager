@@ -14,7 +14,7 @@ var HotelManager = GObject.registerClass(
       const style_class = 'system-status-icon'
 
       this.service = new HotelService()
-      super._init(0.0, null, false)
+      super._init(0.2, null, false)
 
       this.icon = new St.Icon({ icon_name, style_class })
       this.add_actor(this.icon)
