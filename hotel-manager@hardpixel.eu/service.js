@@ -39,14 +39,9 @@ class HotelSession {
     this.session = new Soup.Session()
   }
 
-  uriFor(path) {
-    const pathStr = path && `_/${path}`
-    return new Soup.URI(`${this.config.uri}/${pathStr}`)
-  }
-
   request(type, path) {
-    const uri = this.uriFor(path)
-    const msg = Soup.Message.new_from_uri(type, uri)
+    const uri = path ? `${this.config.uri}/_/${path}` : this.config.uri
+    const msg = Soup.Message.new(type, uri)
 
     msg.request_headers.append('accept', 'application/json')
     this.session.send_message(msg)
