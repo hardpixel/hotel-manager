@@ -44,10 +44,21 @@ class HotelSession {
     const msg = Soup.Message.new(type, uri)
 
     msg.request_headers.append('accept', 'application/json')
-    this.session.send_message(msg)
+
+    let result = null
+
+    if (this.session.send_message) {
+      this.session.send_message(msg)
+      result = msg.response_body.data
+    } else {
+      const bytes   = this.session.send_and_read(msg, null)
+      const decoder = new TextDecoder('utf-8')
+
+      result = decoder.decode(bytes.get_data())
+    }
 
     if (type == 'GET') {
-      return Helpers.toJSON(msg.response_body.data)
+      return Helpers.toJSON(result)
     } else {
       return msg
     }
