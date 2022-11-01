@@ -118,16 +118,24 @@ var HotelService = class HotelService {
   }
 
   get running() {
-    const msg = this.session.head()
-    return msg.status_code != Soup.Status.CANT_CONNECT
+    try {
+      const msg = this.session.head()
+      return msg.status_code != Soup.Status.CANT_CONNECT
+    } catch (e) {
+      return false
+    }
   }
 
   get servers() {
-    const servers = this.session.get('servers') || {}
+    try {
+      const servers = this.session.get('servers') || {}
 
-    return Object.keys(servers).map(name => {
-      return new HotelServer(name, servers[name], this)
-    })
+      return Object.keys(servers).map(name => {
+        return new HotelServer(name, servers[name], this)
+      })
+    } catch (e) {
+      return []
+    }
   }
 
   get command() {
