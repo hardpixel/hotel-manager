@@ -4,5 +4,8 @@
   "url": "https://github.com/hardpixel/hotel-manager",
   "version": 20,
   "name": "Hotel Manager",
-  "description": "Hotel Manager allows to start and stop the Hotel daemon and your development servers via a menu in the status area."
+  "description": "Hotel Manager allows to start and stop the Hotel daemon and your development servers via a menu in the status area.",
+  "donations": {
+    "github": "jonian"
+  }
 }
