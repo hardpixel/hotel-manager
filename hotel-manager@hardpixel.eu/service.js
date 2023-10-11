@@ -1,7 +1,6 @@
-const Soup    = imports.gi.Soup
-const Util    = imports.misc.util
-const Me      = imports.misc.extensionUtils.getCurrentExtension()
-const Helpers = Me.imports.helpers
+import Soup from 'gi://Soup'
+import * as Util from 'resource:///org/gnome/shell/misc/util.js'
+import * as Helpers from './helpers.js'
 
 class HotelConfig {
   constructor() {
@@ -110,7 +109,7 @@ class HotelServer {
   }
 }
 
-var HotelService = class HotelService {
+export class HotelService {
   constructor() {
     this.name    = 'Hotel'
     this.config  = new HotelConfig()

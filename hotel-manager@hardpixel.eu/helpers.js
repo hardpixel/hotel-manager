@@ -1,11 +1,10 @@
-const ByteArray = imports.byteArray
-const GLib      = imports.gi.GLib
+import GLib from 'gi://GLib'
 
-function toString(charCode) {
-  return ByteArray.toString(charCode)
+export function toString(charCode) {
+  return String.fromCharCode(...charCode)
 }
 
-function toJSON(string) {
+export function toJSON(string) {
   try {
     return JSON.parse(string)
   } catch (e) {
@@ -13,21 +12,21 @@ function toJSON(string) {
   }
 }
 
-function getFilePath(path) {
+export function getFilePath(path) {
   return path.replace('~', GLib.get_home_dir())
 }
 
-function configProgramPath() {
+export function configProgramPath() {
   const command = fileGetLine('~/.hotelrc', 0, 'hotel')
   return getFilePath(command)
 }
 
-function userProgramPath(folder) {
+export function userProgramPath(folder) {
   const path = GLib.build_filenamev([getFilePath(folder), 'hotel'])
   return GLib.file_test(path, GLib.FileTest.EXISTS) && path
 }
 
-function findProgramPath() {
+export function findProgramPath() {
   return GLib.find_program_in_path('hotel') ||
     userProgramPath('~/.local/bin')         ||
     userProgramPath('~/.yarn/bin')          ||
@@ -35,7 +34,7 @@ function findProgramPath() {
     configProgramPath()
 }
 
-function fileGetContents(path, defaultValue = null, jsonConvert = false) {
+export function fileGetContents(path, defaultValue = null, jsonConvert = false) {
   let filePath = getFilePath(path)
   let fileData = defaultValue
 
@@ -55,7 +54,7 @@ function fileGetContents(path, defaultValue = null, jsonConvert = false) {
   return fileData
 }
 
-function fileGetLine(path, line, defaultValue = null) {
+export function fileGetLine(path, line, defaultValue = null) {
   let fileData  = fileGetContents(path, '')
   let fileLine  = fileData.split("\n")[line]
   let lineValue = defaultValue

@@ -1,70 +1,74 @@
-const GObject         = imports.gi.GObject
-const St              = imports.gi.St
-const Main            = imports.ui.main
-const PanelMenu       = imports.ui.panelMenu
-const PopupMenu       = imports.ui.popupMenu
-const Me              = imports.misc.extensionUtils.getCurrentExtension()
-const HotelService    = Me.imports.service.HotelService
-const HotelServerItem = Me.imports.widgets.HotelServerItem
+import GObject from 'gi://GObject'
+import St from 'gi://St'
+import * as Main from 'resource:///org/gnome/shell/ui/main.js'
+import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js'
+import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js'
+import { HotelService } from './service.js'
+import { HotelServerItem } from './widgets.js'
 
-var HotelManager = GObject.registerClass(
-  class HotelManager extends PanelMenu.Button {
-    _init() {
-      const icon_name   = 'network-cellular-hspa-symbolic'
-      const style_class = 'system-status-icon'
+class HotelManager extends PanelMenu.Button {
+  static {
+    GObject.registerClass(this)
+  }
 
-      this.service = new HotelService()
-      super._init(0.2, null, false)
+  constructor() {
+    super(0.2, null, false)
 
-      this.icon = new St.Icon({ icon_name, style_class })
-      this.add_actor(this.icon)
+    this.service = new HotelService()
 
-      this.menu.connect('open-state-changed', () => {
-        this._refresh()
-      })
+    const icon_name   = 'network-cellular-hspa-symbolic'
+    const style_class = 'system-status-icon'
 
+    this.icon = new St.Icon({ icon_name, style_class })
+    this.add_actor(this.icon)
+
+    this.menu.connect('open-state-changed', () => {
       this._refresh()
-    }
+    })
 
-    _addHotelItem() {
-      const item = new HotelServerItem(this.service)
+    this._refresh()
+  }
+
+  _addHotelItem() {
+    const item = new HotelServerItem(this.service)
+    item.connect('close', () => this.menu.close())
+
+    this.menu.addMenuItem(item)
+  }
+
+  _addServerItems() {
+    const servers = this.service.servers
+    if (!servers.length) return
+
+    const separator = new PopupMenu.PopupSeparatorMenuItem()
+    this.menu.addMenuItem(separator)
+
+    servers.forEach((server) => {
+      const item = new HotelServerItem(server)
       item.connect('close', () => this.menu.close())
 
       this.menu.addMenuItem(item)
-    }
-
-    _addServerItems() {
-      const servers = this.service.servers
-      if (!servers.length) return
-
-      const separator = new PopupMenu.PopupSeparatorMenuItem()
-      this.menu.addMenuItem(separator)
-
-      servers.forEach((server) => {
-        const item = new HotelServerItem(server)
-        item.connect('close', () => this.menu.close())
-
-        this.menu.addMenuItem(item)
-      })
-    }
-
-    _refresh() {
-      this.menu.removeAll()
-
-      this._addHotelItem()
-      this._addServerItems()
-    }
+    })
   }
-)
 
-let hotelManager
+  _refresh() {
+    this.menu.removeAll()
 
-function enable() {
-  hotelManager = new HotelManager()
-  Main.panel.addToStatusArea('hotelManager', hotelManager)
+    this._addHotelItem()
+    this._addServerItems()
+  }
 }
 
-function disable() {
-  hotelManager.destroy()
-  hotelManager = null
+export default class Extension {
+  enable() {
+    this.button = new HotelManager()
+    Main.panel.addToStatusArea('hotelManager', this.button)
+  }
+
+  disable() {
+    if (this.button) {
+      this.button.destroy()
+      this.button = null
+    }
+  }
 }
