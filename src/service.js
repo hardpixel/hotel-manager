@@ -1,6 +1,6 @@
-import Soup from 'gi://Soup'
-import * as Util from 'resource:///org/gnome/shell/misc/util.js'
-import * as Helpers from './helpers.js'
+import { Soup } from '#gi'
+import { util as Util } from '#misc'
+import { fileGetContents, toJSON, findProgramPath } from '#me/helpers'
 
 class HotelConfig {
   constructor() {
@@ -28,7 +28,7 @@ class HotelConfig {
   }
 
   reload() {
-    this.fileData = Helpers.fileGetContents(this.filePath, {}, true)
+    this.fileData = fileGetContents(this.filePath, {}, true)
   }
 }
 
@@ -57,7 +57,7 @@ class HotelSession {
     }
 
     if (type == 'GET') {
-      return Helpers.toJSON(result)
+      return toJSON(result)
     } else {
       return msg
     }
@@ -138,7 +138,7 @@ export class HotelService {
   }
 
   get command() {
-    return Helpers.findProgramPath()
+    return findProgramPath()
   }
 
   start() {

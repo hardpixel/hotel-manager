@@ -1,7 +1,5 @@
-import GLib from 'gi://GLib'
-import GObject from 'gi://GObject'
-import St from 'gi://St'
-import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js'
+import { GLib, GObject, St } from '#gi'
+import { popupMenu as PopupMenu } from '#ui'
 
 export class HotelServerItem extends PopupMenu.PopupSwitchMenuItem {
   static {
@@ -60,7 +58,7 @@ export class HotelServerItem extends PopupMenu.PopupSwitchMenuItem {
 
     GLib.timeout_add(0, 1000, () => {
       this.server.start()
-      return false
+      return GLib.SOURCE_REMOVE
     })
   }
 

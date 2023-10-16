@@ -1,0 +1,21 @@
+{
+  "name": "hotel-manager",
+  "version": "22",
+  "description": "GNOME Shell hotel extension",
+  "repository": "https://github.com/hardpixel/hotel-manager",
+  "author": "Jonian Guveli",
+  "license": "GPL",
+  "private": true,
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "package": "package=1 rollup -c"
+  },
+  "devDependencies": {
+    "rollup": "^2.79.1",
+    "rollup-plugin-delete": "latest",
+    "rollup-plugin-gsext": "latest",
+    "rollup-plugin-sass": "latest",
+    "rollup-plugin-zipdir": "latest"
+  }
+}

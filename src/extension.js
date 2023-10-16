@@ -1,12 +1,13 @@
-import GObject from 'gi://GObject'
-import St from 'gi://St'
-import * as Main from 'resource:///org/gnome/shell/ui/main.js'
-import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js'
-import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js'
-import { HotelService } from './service.js'
-import { HotelServerItem } from './widgets.js'
+import { GObject, St } from '#gi'
 
-class HotelManager extends PanelMenu.Button {
+import { main as Main } from '#ui'
+import { panelMenu as PanelMenu } from '#ui'
+import { popupMenu as PopupMenu } from '#ui'
+
+import { HotelService } from '#me/service'
+import { HotelServerItem } from '#me/widgets'
+
+class HotelManagerButton extends PanelMenu.Button {
   static {
     GObject.registerClass(this)
   }
@@ -59,16 +60,14 @@ class HotelManager extends PanelMenu.Button {
   }
 }
 
-export default class Extension {
+export default class HotelManagerExtension {
   enable() {
-    this.button = new HotelManager()
+    this.button = new HotelManagerButton()
     Main.panel.addToStatusArea('hotelManager', this.button)
   }
 
   disable() {
-    if (this.button) {
-      this.button.destroy()
-      this.button = null
-    }
+    this.button?.destroy()
+    this.button = null
   }
 }

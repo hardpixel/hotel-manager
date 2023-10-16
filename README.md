@@ -1,6 +1,8 @@
 # Hotel Manager
 Gnome Shell extension to manage [Hotel](https://github.com/typicode/hotel) development servers.
 
+[![Build](https://github.com/hardpixel/hotel-manager/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/hardpixel/hotel-manager/actions/workflows/build.yml)
+
 ## About
 Hotel Manager is a [Gnome](https://www.gnome.org/) Shell extension which
 allows to start and stop the Hotel daemon and your development servers via a menu in the status area.

@@ -1,4 +1,4 @@
-import GLib from 'gi://GLib'
+import { GLib } from '#gi'
 
 export function toString(charCode) {
   return String.fromCharCode(...charCode)
