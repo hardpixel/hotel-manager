@@ -32,6 +32,7 @@ export default {
       ]
     }),
     process.env.package && zip({
+      name: `${pkg.name}-v${pkg.version}.zip`,
       outputDir: 'build'
     })
   ]
