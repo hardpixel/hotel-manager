@@ -21,7 +21,7 @@ class HotelManagerButton extends PanelMenu.Button {
     const style_class = 'system-status-icon'
 
     this.icon = new St.Icon({ icon_name, style_class })
-    this.add_actor(this.icon)
+    this.add_child(this.icon)
 
     this.menu.connect('open-state-changed', () => {
       this._refresh()
