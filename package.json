@@ -1,6 +1,6 @@
 {
   "name": "hotel-manager",
-  "version": "24",
+  "version": "25",
   "description": "GNOME Shell hotel extension",
   "repository": "https://github.com/hardpixel/hotel-manager",
   "author": "Jonian Guveli",
